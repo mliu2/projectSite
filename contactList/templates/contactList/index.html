@@ -1,0 +1,38 @@
+{% load static%}
+
+{% if contact_list %}
+    <table>
+      <tr>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Street Address</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip Code</th>
+        <th>Phone Number</th>
+        <th>Email</th>
+        <th>Title</th>
+        <th>Contact by Phone</th>
+        <th>Contact by Mail</th>
+        <th>Contact by Email</th>
+      </tr>
+      {% for contact in contact_list %}
+        <tr>
+          <td>{{ contact.last_name }}</td>
+          <td>{{ contact.first_name }}</td>
+          <td>{{ contact.street }}</td>
+          <td>{{ contact.city }}</td>
+          <td>{{ contact.state }}</td>
+          <td>{{ contact.zip }}</td>
+          <td>{{ contact.phone }}</td>
+          <td>{{ contact.email }}</td>
+          <td>{{ contact.title }}</td>
+          <td>{{ contact.use_mail }}</td>
+          <td>{{ contact.use_phone }}</td>
+          <td>{{ contact.use_email }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+{% else %}
+    <p>No contacts.</p>
+{% endif %}
