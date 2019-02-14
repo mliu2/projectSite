@@ -3,8 +3,9 @@ import json
 import urllib.parse
 from decimal import Decimal
 
+from .config import MapBoxConfig
+
 class Contact(models.Model):
-    ACCESS_TOKEN = "pk.eyJ1IjoiY2FzYWRlMSIsImEiOiJjanMzd2lxN2cwa21jNDRtcXlrM2Q3cXp3In0.dEzRwANE_WdiKAQxqDOZEQ"
 
     def save(self):
         address = "%s %s, %s %s" % (self.street, self.city, self.state, self.zip)
@@ -16,7 +17,7 @@ class Contact(models.Model):
         address = urllib.parse.quote_plus(address)
         maps_api_url = '?'.join([
             'https://api.mapbox.com/geocoding/v5/mapbox.places/' + address + '.json',
-            urllib.parse.urlencode({'access_token': Contact.ACCESS_TOKEN, 'autocomplete':True})
+            urllib.parse.urlencode({'access_token': MapBoxConfig.access_token, 'autocomplete':True})
         ])
         response = urllib.request.urlopen(maps_api_url)
         data = json.loads(response.read().decode('utf8'))
