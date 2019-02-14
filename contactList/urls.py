@@ -8,5 +8,5 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('contacts/', views.IndexView.as_view(), name='contacts'),
     path('mailer/', views.FormView.as_view(), name='mailer'),
-
+    path('thanks/', views.thanks, name='thanks')
 ]
