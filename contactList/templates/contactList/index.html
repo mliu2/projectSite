@@ -1,38 +1,152 @@
-{% load static%}
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title>Contact Information Table</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+      #tr.point{
+          cursor:pointer;
+        }
+        #map { height: 100%; }
+        #map-canvas {
+      		position: absolute;
+			    margin-top:5px;
+          padding-bottom: 30px;
+          width:85%;
+			    height:50%;
+        }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      {% if contact_list.0 %}
+        <h1>Table of Contacts</h1>
+        <div class='table-responsive'>
+          <table class="table table-hover">
+            <tr>
+              <th>Last Name</th>
+              <th>First Name</th>
+              <th>Street Address</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Zip Code</th>
+              <th>Phone Number</th>
+              <th>Email</th>
+              <th>Title</th>
+              <th>Contact by Phone</th>
+              <th>Contact by Mail</th>
+              <th>Contact by Email</th>
+            </tr>
+            {% for contact in contact_list.0 %}
+              <tr class="point" id = {{ contact.id }} data-pos=[{{ contact.longitude }},{{ contact.latitude }}]>
+                <td>{{ contact.last_name }}</td>
+                <td>{{ contact.first_name }}</td>
+                <td>{{ contact.street }}</td>
+                <td>{{ contact.city }}</td>
+                <td>{{ contact.state }}</td>
+                <td>{{ contact.zip }}</td>
+                <td>{{ contact.phone }}</td>
+                <td>{{ contact.email }}</td>
+                <td>{{ contact.title }}</td>
+                <td>{{ contact.use_mail }}</td>
+                <td>{{ contact.use_phone }}</td>
+                <td>{{ contact.use_email }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+        <div id="map-canvas"><div id="map"></div></div>
+      {% else %}
+        <p>No contacts.</p>
+      {% endif %}
+    </div>
+  </body>
+  <script>
+    mapboxgl.accessToken = '{{contact_list.1}}';
+    var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
+      center: [-74.176609, 41.08394699999999], // starting position [lng, lat]
+      zoom: 8 // starting zoom
+    });
 
-{% if contact_list %}
-    <table>
-      <tr>
-        <th>Last Name</th>
-        <th>First Name</th>
-        <th>Street Address</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Zip Code</th>
-        <th>Phone Number</th>
-        <th>Email</th>
-        <th>Title</th>
-        <th>Contact by Phone</th>
-        <th>Contact by Mail</th>
-        <th>Contact by Email</th>
-      </tr>
-      {% for contact in contact_list %}
-        <tr>
-          <td>{{ contact.last_name }}</td>
-          <td>{{ contact.first_name }}</td>
-          <td>{{ contact.street }}</td>
-          <td>{{ contact.city }}</td>
-          <td>{{ contact.state }}</td>
-          <td>{{ contact.zip }}</td>
-          <td>{{ contact.phone }}</td>
-          <td>{{ contact.email }}</td>
-          <td>{{ contact.title }}</td>
-          <td>{{ contact.use_mail }}</td>
-          <td>{{ contact.use_phone }}</td>
-          <td>{{ contact.use_email }}</td>
-        </tr>
-      {% endfor %}
-    </table>
-{% else %}
-    <p>No contacts.</p>
-{% endif %}
+
+    //On map load
+    map.on('load', function() {
+      var features = [];
+      $('tr.point').each(function() {
+        var pos = $(this).data('pos');
+        var label = "<strong>" + $(this).children().slice(8,9).text() + " "
+             + $(this).children().slice(1,2).text() + " "
+             + $(this).children().slice(0,1).text() + "</strong><br/>"
+             + $(this).children().slice(2,3).text() + "<br/>"
+             + $(this).children().slice(3,4).text() + ", "
+             + $(this).children().slice(4,5).text() + " "
+             + $(this).children().slice(5,6).text() + "<br/>"
+        features.push({
+            "type": "Feature",
+            "properties": {"description":label},
+            "geometry": {
+              "type": "Point",
+              "coordinates": pos
+            }
+        })
+      });
+      // Add a layer showing the places.
+      map.addLayer({
+        "id": "places",
+        "type": "symbol",
+        "source": {
+          "type": "geojson",
+          "data": {
+            "type": "FeatureCollection",
+            "features": features
+          }
+        },
+          "layout": {
+          "icon-image": "circle-stroked-15",
+          "icon-allow-overlap": true
+        }
+      });
+
+      // Create a popup, but don't add it to the map yet.
+      var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+      });
+
+      map.on('mouseenter', 'places', function(e) {
+        // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = 'pointer';
+
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = e.features[0].properties.description;
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        // Populate the popup and set its coordinates
+        // based on the feature found.
+        popup.setLngLat(coordinates)
+          .setHTML(description)
+          .addTo(map);
+        });
+
+        map.on('mouseleave', 'places', function() {
+          map.getCanvas().style.cursor = '';
+          popup.remove();
+        });
+    });
+  </script>
+</html>

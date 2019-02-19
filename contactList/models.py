@@ -10,7 +10,6 @@ class Contact(models.Model):
     def save(self):
         address = "%s %s, %s %s" % (self.street, self.city, self.state, self.zip)
         self.latitude,self.longitude = self.geocode(address)
-        print (self.longitude)
         super(Contact, self).save()
 
     def geocode(self, address):
@@ -69,5 +68,5 @@ class Contact(models.Model):
     use_mail = models.BooleanField()
     use_phone = models.BooleanField()
     use_email = models.BooleanField()
-    latitude = models.DecimalField(max_digits=8, decimal_places=5,null=True)
-    longitude = models.DecimalField(max_digits=8, decimal_places=5,null=True)
+    latitude = models.DecimalField(max_digits=8, decimal_places=5,null=True,editable=False)
+    longitude = models.DecimalField(max_digits=8, decimal_places=5,null=True,editable=False)
