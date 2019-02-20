@@ -6,10 +6,9 @@ from django.views import generic
 from django.utils import timezone
 
 from .models import Contact
-from .forms import ContactForm
 from .config import MapBoxConfig
 
-class IndexView(generic.ListView):
+class ContactList(generic.ListView):
 	template_name = 'contactList/index.html'
 	context_object_name = 'contact_list'
 
@@ -19,11 +18,16 @@ class IndexView(generic.ListView):
 def thanks(request):
 	return render(request, 'contactList/thanks.html')
 
-class FormView(generic.edit.FormView):
-    template_name = 'contactList/mailer.html'
-    form_class = ContactForm
+class ContactCreate(generic.edit.CreateView):
+    model = Contact
     success_url = '../thanks/'
+    fields = '__all__'
 
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
+class ContactUpdate(generic.edit.UpdateView):
+    model = Contact
+    success_url = '../'
+    fields = '__all__'
+
+class ContactDelete(generic.edit.DeleteView):
+    model = Contact
+    success_url = '../'
