@@ -4,19 +4,22 @@ from django.template import loader
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Contact
 from .config import MapBoxConfig
 
-class ContactList(generic.ListView):
-	template_name = 'contactList/index.html'
-	context_object_name = 'contact_list'
+class ContactList(LoginRequiredMixin,generic.ListView):
+    login_url = 'contactList:login'
+    template_name = 'contactList/contact_list.html'
+    context_object_name = 'contact_list'
 
-	def get_queryset(self):
-		return Contact.objects.order_by('last_name'),MapBoxConfig.access_token
+    def get_queryset(self):
+        return Contact.objects.order_by('last_name'),MapBoxConfig.access_token
 
 def thanks(request):
-	return render(request, 'contactList/thanks.html')
+    return render(request, 'contactList/thanks.html')
 
 class ContactCreate(generic.edit.CreateView):
     model = Contact

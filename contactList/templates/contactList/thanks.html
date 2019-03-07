@@ -1,4 +1,8 @@
-<div class='container'>
+{% extends 'contactList/base.html' %}
+
+{% block title %}Thanks!{% endblock %}
+
+{% block content %}
     <h1>Thank you for your information!</h1>
     <p><a href = "{% url 'contactList:contact_create' %}">Return to input page</a></p>
-</div>
+{% endblock %}

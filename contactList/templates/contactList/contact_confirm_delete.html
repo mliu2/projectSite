@@ -1,6 +1,12 @@
+{% extends 'contactList/base.html' %}
+
+{% block title %}Contact Information Delete{% endblock %}
+
+{% block content %}
 <form method="post">
     {% csrf_token %}
     <p>Are you sure you want to delete {{ object.title }} {{ object.first_name }} {{ object.last_name }}?</p>
     <input type="submit" value="Confirm">
     <a href="{% url 'contactList:contacts' %}"><input type="button" value="Back"></a>
 </form>
+{% endblock %}
