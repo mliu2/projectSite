@@ -1,5 +1,5 @@
 # Final Project - Persistent and Secure Contact Lists
-** A project I have previously completed in Node.js, redone in Django as a learning excerise. **
+**A project I have previously completed in Node.js, redone in Django as a learning excerise.**
 
 [**Original full requirements here**](https://docs.google.com/document/d/1lfnxI3C_44m9MwZaBxAtfBb9w6jciJvoIsSQw40mXvg/pub)
 
