@@ -9,29 +9,29 @@
 
 In Project 1 you created a contact form and saved it to an array in memory.  You also created a /contacts page which served up a list of all the contacts in your array.  Now you must store each contact into a MongoDB collection called “contacts”.  Each document in the contacts collection should have all the information you collected about contacts in Project 1:
 
--First Name                 (String)
+- First Name                 (String)
 
--Last Name                 (String)
+- Last Name                 (String)
 
--Street                         (String)
+- Street                         (String)
 
--City                         (String)
+- City                         (String)
 
--State                         (String)
+- State                         (String)
 
--Zip                         (String)
+- Zip                         (String)
 
--Phone                         (String)
+- Phone                         (String)
 
--Email                         (String)
+- Email                         (String)
 
--Mr./Mrs./Ms./Dr.         (String)
+- Mr./Mrs./Ms./Dr.         (String)
 
--Contact By Mail        (Boolean)
+- Contact By Mail        (Boolean)
 
--Contact By Phone        (Boolean)
+- Contact By Phone        (Boolean)
 
--Contact BY Email         (Email)
+- Contact BY Email         (Email)
 
 Users should be able to visit /mailer to get a standard HTML form where they can fill out their information.
 
